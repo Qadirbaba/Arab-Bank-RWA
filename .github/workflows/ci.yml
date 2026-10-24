@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Server smoke test
+        run: |
+          EWRA_DATA_DIR=$RUNNER_TEMP/data PORT=8080 npm start &
+          for i in $(seq 1 20); do curl -fs http://localhost:8080/ >/dev/null && break; sleep 1; done
+          curl -fs -c jar -X POST http://localhost:8080/api/login -H 'Content-Type: application/json' -d '{"username":"cco","password":"Ewra@2026"}'
+          curl -fs -b jar http://localhost:8080/api/state | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const n=Object.keys(JSON.parse(s).assessments).length;if(n!==30)process.exit(1);console.log("entities:",n)})'
+      - name: Docker build
+        run: docker build -t ewra-platform .

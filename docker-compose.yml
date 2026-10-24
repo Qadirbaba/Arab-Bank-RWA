@@ -1,0 +1,17 @@
+services:
+  ewra:
+    build: .
+    image: ewra-platform:latest
+    ports:
+      - "8080:8080"
+    environment:
+      # Initial password for every seeded account (users must change it at first sign-in). Change before first start.
+      EWRA_SEED_PASSWORD: "Ewra@2026"
+      # Set to "true" when served over HTTPS (behind the bank's reverse proxy / load balancer).
+      EWRA_COOKIE_SECURE: "false"
+    volumes:
+      - ewra-data:/data
+    restart: unless-stopped
+
+volumes:
+  ewra-data:
