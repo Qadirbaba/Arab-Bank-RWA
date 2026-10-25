@@ -1,0 +1,6 @@
+docs/*.xlsx
+package-lock.json
+node_modules/
+data/
+_site/
+*.log
