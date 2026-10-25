@@ -4,3 +4,8 @@ _site
 .git
 .github
 test
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.geminiignore
+.claude
